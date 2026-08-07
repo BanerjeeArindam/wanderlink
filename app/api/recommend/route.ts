@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { getDestinationImage } from '@/lib/unsplash';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -37,11 +38,21 @@ export async function POST(req: Request) {
     });
 
     const rawContent = completion.choices[0]?.message?.content || '[]';
-    // Clean potential markdown formatting from LLM output
     const cleanedContent = rawContent.replace(/```json|```/g, '').trim();
-    const recommendations = JSON.parse(cleanedContent);
+    const parsedRecommendations = JSON.parse(cleanedContent);
 
-    return NextResponse.json({ success: true, destinations: recommendations });
+    // Attach a live Unsplash image URL to each destination card
+    const enrichedDestinations = await Promise.all(
+      parsedRecommendations.map(async (item: any) => {
+        const imageUrl = await getDestinationImage(item.destination);
+        return {
+          ...item,
+          imageUrl, // Adds live photo URL property
+        };
+      })
+    );
+
+    return NextResponse.json({ success: true, destinations: enrichedDestinations });
   } catch (error: any) {
     console.error('AI Recommendation Error:', error);
     return NextResponse.json(

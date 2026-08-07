@@ -10,6 +10,7 @@ interface Destination {
   reasonsToVisit: string[];
   keyHighlights: string[];
   affiliateQuery: string;
+  imageUrl?: string;
 }
 
 export default function ResultsPage() {
@@ -63,7 +64,16 @@ export default function ResultsPage() {
                 key={index}
                 className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg flex flex-col justify-between"
               >
-                <div className="p-6 space-y-4">
+                {item.imageUrl && (
+  			<div className="h-48 w-full overflow-hidden relative">
+    				<img
+      					src={item.imageUrl}
+      					alt={item.destination}
+      					className="w-full h-full object-cover"
+   				 />
+  			</div>
+		)}
+		<div className="p-6 space-y-4">
                   <div className="flex justify-between items-start">
                     <h2 className="text-2xl font-bold text-teal-400">{item.destination}</h2>
                     <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-xs font-semibold px-3 py-1 rounded-full">
