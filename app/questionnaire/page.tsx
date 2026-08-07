@@ -87,10 +87,10 @@ const handleSubmit = async () => {
 };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        
-        {/* Header & Progress Bar */}
+        <div className="py-12 px-4 flex flex-col justify-center items-center bg-slate-900 text-slate-100">
+        <div className="w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden">        
+       
+ {/* Header & Progress Bar */}
         <div className="p-6 bg-slate-900 text-white">
           <div className="flex justify-between items-center mb-2">
             <h1 className="text-xl font-bold tracking-wide">WanderLink Travel DNA</h1>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Charcoal Slate Background Circle -->
+  <circle cx="250" cy="250" r="240" fill="#0F172A" />
+  
+  <!-- Outer Glow Ring -->
+  <circle cx="250" cy="250" r="210" fill="none" stroke="url(#avatarGrad)" stroke-width="6" opacity="0.4" stroke-dasharray="12 8" />
+  
+  <!-- Main W Compass Vector -->
+  <g filter="url(#shadow)">
+    <path d="M110 320 C180 380, 320 380, 390 320" fill="none" stroke="url(#avatarGrad)" stroke-width="14" stroke-linecap="round" opacity="0.5" />
+    <path d="M120 180 L195 330 L250 230 L305 330 L380 180" fill="none" stroke="url(#avatarGrad)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="250" cy="140" r="22" fill="#F59E0B" />
+    <circle cx="380" cy="180" r="18" fill="#10B981" />
+  </g>
+</svg>
+
