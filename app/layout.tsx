@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import ComingSoonOverlay from '@/components/ComingSoonOverlay';
+import { isComingSoonEnabled } from '@/lib/coming-soon';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -15,6 +17,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const comingSoon = isComingSoonEnabled();
+
+  if (comingSoon) {
+    return (
+      <html lang="en">
+        <body className="bg-slate-900 text-slate-100 font-sans min-h-screen overflow-hidden selection:bg-teal-500 selection:text-slate-950">
+          <ComingSoonOverlay />
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en" className="scroll-smooth">
       <body className="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-slate-950">
