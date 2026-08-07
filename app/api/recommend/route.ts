@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getDestinationImage } from '@/lib/unsplash';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: Request) {
   try {
+   // Instantiate OpenAI lazily inside the handler
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const body = await req.json();
 
     const systemPrompt = `
