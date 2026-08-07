@@ -1,7 +1,7 @@
 export default function ComingSoonOverlay() {
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/35 backdrop-blur-[3px]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="coming-soon-title"
@@ -10,7 +10,7 @@ export default function ComingSoonOverlay() {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-r from-emerald-600/20 via-teal-500/20 to-amber-500/20 rounded-full blur-3xl animate-pulse" />
       </div>
 
-      <div className="relative mx-6 w-full max-w-lg rounded-3xl border border-slate-700/80 bg-slate-900/90 p-10 shadow-2xl shadow-teal-500/10 text-center">
+      <div className="relative mx-6 w-full max-w-lg rounded-3xl border border-slate-600/60 bg-slate-900/80 backdrop-blur-xl p-10 shadow-2xl shadow-teal-500/20 text-center">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl overflow-hidden shadow-lg shadow-teal-500/20">
           <img src="/logo.svg" alt="WanderLink Logo" className="h-full w-full object-cover" />
         </div>
