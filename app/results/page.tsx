@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Destination {
   destination: string;
@@ -13,104 +13,114 @@ interface Destination {
 }
 
 export default function ResultsPage() {
-  // Sample fallback state for visual preview
-  const sampleDestinations: Destination[] = [
-    {
-      destination: 'Denpasar, Bali (Indonesia)',
-      countryCode: 'ID',
-      matchScore: 96,
-      heroTagline: 'Tropical beach family paradise with vibrant culture and nature parks.',
-      reasonsToVisit: [
-        'Ideal warm weather during July with minimal rain.',
-        'Extensive family-friendly resorts fitting a $5,000 budget.',
-        'Great mix of beaches, wildlife sanctuaries, and theme parks.'
-      ],
-      keyHighlights: ['Waterbom Bali', 'Sacred Monkey Forest', 'Nusa Dua Beach'],
-      affiliateQuery: 'Bali Beach Resorts'
-    },
-    {
-      destination: 'Gold Coast, Australia',
-      countryCode: 'AU',
-      matchScore: 92,
-      heroTagline: 'World-class theme parks, pristine beaches, and accessible wildlife.',
-      reasonsToVisit: [
-        'Short domestic travel flight with no visa requirements.',
-        'Top-tier theme parks suitable for young children.',
-        'Mild sunny weather and easy navigation.'
-      ],
-      keyHighlights: ['Currumbin Wildlife Sanctuary', 'Warner Bros. Movie World', 'Burleigh Heads'],
-      affiliateQuery: 'Gold Coast Family Hotels'
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+
+  useEffect(() => {
+    const savedResults = localStorage.getItem('wanderlink_results');
+    if (savedResults) {
+      try {
+        setDestinations(JSON.parse(savedResults));
+      } catch (e) {
+        console.error('Failed to parse saved results:', e);
+      }
     }
-  ];
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6 md:p-12">
       <div className="max-w-5xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Your AI Travel Match Recommendations ✨
-          </h1>
-          <p className="mt-2 text-slate-400">
-            Based on your Travel DNA, here are the top destinations tailored for your journey.
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Your AI Travel Recommendations ✨
+            </h1>
+            <p className="mt-2 text-slate-400">
+              Tailored destinations matched to your unique Travel DNA.
+            </p>
+          </div>
+          <a
+            href="/questionnaire"
+            className="text-sm bg-slate-800 hover:bg-slate-700 border border-slate-700 px-4 py-2 rounded-lg transition-colors"
+          >
+            🔄 Retake Quiz
+          </a>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {sampleDestinations.map((item, index) => (
-            <div key={index} className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg flex flex-col justify-between">
-              <div className="p-6 space-y-4">
-                <div className="flex justify-between items-start">
-                  <h2 className="text-2xl font-bold text-teal-400">{item.destination}</h2>
-                  <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-xs font-semibold px-3 py-1 rounded-full">
-                    {item.matchScore}% Match
-                  </span>
-                </div>
+        {destinations.length === 0 ? (
+          <div className="text-center py-16 bg-slate-800/50 rounded-2xl border border-slate-800">
+            <p className="text-slate-400 mb-4">No recommendations found yet.</p>
+            <a
+              href="/questionnaire"
+              className="inline-block px-6 py-3 bg-teal-600 hover:bg-teal-500 font-semibold rounded-lg text-white"
+            >
+              Start Questionnaire
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {destinations.map((item, index) => (
+              <div
+                key={index}
+                className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg flex flex-col justify-between"
+              >
+                <div className="p-6 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-2xl font-bold text-teal-400">{item.destination}</h2>
+                    <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-xs font-semibold px-3 py-1 rounded-full">
+                      {item.matchScore}% Match
+                    </span>
+                  </div>
 
-                <p className="text-slate-300 italic text-sm">{item.heroTagline}</p>
+                  <p className="text-slate-300 italic text-sm">{item.heroTagline}</p>
 
-                <div className="space-y-2">
-                  <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold">Why it matches:</h4>
-                  <ul className="space-y-1 text-sm text-slate-300 list-disc list-inside">
-                    {item.reasonsToVisit.map((reason, i) => (
-                      <li key={i}>{reason}</li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="space-y-2">
+                    <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold">
+                      Why it matches:
+                    </h4>
+                    <ul className="space-y-1 text-sm text-slate-300 list-disc list-inside">
+                      {item.reasonsToVisit?.map((reason, i) => (
+                        <li key={i}>{reason}</li>
+                      ))}
+                    </ul>
+                  </div>
 
-                <div className="space-y-2">
-                  <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold">Top Highlights:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {item.keyHighlights.map((spot, i) => (
-                      <span key={i} className="bg-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-md">
-                        📍 {spot}
-                      </span>
-                    ))}
+                  <div className="space-y-2">
+                    <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold">
+                      Top Highlights:
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {item.keyHighlights?.map((spot, i) => (
+                        <span key={i} className="bg-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-md">
+                          📍 {spot}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Dynamic Affiliate Booking Links */}
-              <div className="p-6 bg-slate-850 border-t border-slate-700/50 grid grid-cols-2 gap-3">
-                <a
-                  href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(item.affiliateQuery)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-lg text-center text-sm transition-colors"
-                >
-                  Find Hotels
-                </a>
-                <a
-                  href={`https://www.viator.com/search/${encodeURIComponent(item.affiliateQuery)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg text-center text-sm transition-colors"
-                >
-                  Book Tours
-                </a>
+                {/* Affiliate Booking Links */}
+                <div className="p-6 bg-slate-850 border-t border-slate-700/50 grid grid-cols-2 gap-3">
+                  <a
+                    href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(item.affiliateQuery || item.destination)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-lg text-center text-sm transition-colors"
+                  >
+                    Find Hotels
+                  </a>
+                  <a
+                    href={`https://www.viator.com/search/${encodeURIComponent(item.affiliateQuery || item.destination)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg text-center text-sm transition-colors"
+                  >
+                    Book Tours
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

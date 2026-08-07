@@ -60,24 +60,31 @@ export default function QuestionnairePage() {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/recommend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+const handleSubmit = async () => {
+  setLoading(true);
+  try {
+    const response = await fetch('/api/recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
 
-      const data = await response.json();
-      console.log('AI Destination Recommendations:', data);
-      alert('Preferences submitted successfully! Check console for AI output.');
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
-    } finally {
-      setLoading(false);
+    const data = await response.json();
+
+    if (data.success) {
+      // Save AI results to localStorage and navigate to results page
+      localStorage.setItem('wanderlink_results', JSON.stringify(data.destinations));
+      window.location.href = '/results';
+    } else {
+      alert('Error generating recommendations: ' + data.error);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching recommendations:', error);
+    alert('Something went wrong. Please check your connection and API keys.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4">
