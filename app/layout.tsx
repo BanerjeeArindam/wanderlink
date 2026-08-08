@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import ComingSoonOverlay from '@/components/ComingSoonOverlay';
 import { isComingSoonEnabled } from '@/lib/coming-soon';
+import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -70,6 +71,15 @@ export default function RootLayout({
               Start DNA Quiz ✨
             </Link>
           </div>
+          <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
+          (function () {
+              var script = document.createElement("script");
+              script.async = 1;
+              script.setAttribute("data-cmp-ab","2");
+              script.src = 'https://emrldtp.cc/NTYwMTEw.js?t=560110';
+              document.head.appendChild(script);
+          })();
+        </script> 
         </header>
 
         {/* 📄 MAIN PAGE CONTENT */}
@@ -88,19 +98,10 @@ export default function RootLayout({
               <Link href="/questionnaire" className="hover:text-white transition-colors">Quiz</Link>
               <Link href="/results" className="hover:text-white transition-colors">Results</Link>
             </div>
-
             <p>© {new Date().getFullYear()} WanderLink Travel. All rights reserved.</p>
           </div>
         </footer>
-        <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
-  (function () {
-      var script = document.createElement("script");
-      script.async = 1;
-      script.setAttribute("data-cmp-ab","2");
-      script.src = 'https://emrldtp.cc/NTYwMTEw.js?t=560110';
-      document.head.appendChild(script);
-  })();
-</script>
+        
       </body>
     </html>
   );
