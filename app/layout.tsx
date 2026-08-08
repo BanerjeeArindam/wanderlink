@@ -92,7 +92,15 @@ export default function RootLayout({
             <p>© {new Date().getFullYear()} WanderLink Travel. All rights reserved.</p>
           </div>
         </footer>
-
+        <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
+  (function () {
+      var script = document.createElement("script");
+      script.async = 1;
+      script.setAttribute("data-cmp-ab","2");
+      script.src = 'https://emrldtp.cc/NTYwMTEw.js?t=560110';
+      document.head.appendChild(script);
+  })();
+</script>
       </body>
     </html>
   );
