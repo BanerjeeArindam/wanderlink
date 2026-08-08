@@ -1,6 +1,17 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getDestinationImage } from '@/lib/unsplash';
+import { searchTours } from '@/lib/viator';
+
+interface RecommendationItem {
+  destination: string;
+  countryCode: string;
+  matchScore: number;
+  heroTagline: string;
+  reasonsToVisit: string[];
+  keyHighlights: string[];
+  affiliateQuery: string;
+}
 
 export async function POST(req: Request) {
   try {
@@ -44,11 +55,17 @@ export async function POST(req: Request) {
 
     // Attach a live Unsplash image URL to each destination card
     const enrichedDestinations = await Promise.all(
-      parsedRecommendations.map(async (item: any) => {
-        const imageUrl = await getDestinationImage(item.destination);
+      parsedRecommendations.map(async (item: RecommendationItem) => {
+        const searchQuery = item.affiliateQuery || item.destination;
+        const [imageUrl, viatorTours] = await Promise.all([
+          getDestinationImage(item.destination),
+          searchTours(searchQuery, 3),
+        ]);
+
         return {
           ...item,
-          imageUrl, // Adds live photo URL property
+          imageUrl,
+          viatorTours,
         };
       })
     );

@@ -2,6 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 
+interface ViatorTour {
+  productCode: string;
+  title: string;
+  productUrl: string;
+  priceFrom?: number;
+  currency?: string;
+  rating?: number;
+  reviewCount?: number;
+  imageUrl?: string;
+  durationMinutes?: number;
+}
+
 interface Destination {
   destination: string;
   countryCode: string;
@@ -11,6 +23,23 @@ interface Destination {
   keyHighlights: string[];
   affiliateQuery: string;
   imageUrl?: string;
+  viatorTours?: ViatorTour[];
+}
+
+function formatPrice(amount: number, currency: string) {
+  return new Intl.NumberFormat('en-AU', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+function formatDuration(minutes?: number) {
+  if (!minutes) return null;
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const remaining = minutes % 60;
+  return remaining ? `${hours}h ${remaining}m` : `${hours}h`;
 }
 
 export default function ResultsPage() {
@@ -106,6 +135,54 @@ export default function ResultsPage() {
                       ))}
                     </div>
                   </div>
+
+                  {item.viatorTours && item.viatorTours.length > 0 && (
+                    <div className="space-y-3 pt-2">
+                      <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold">
+                        Top Viator Tours
+                      </h4>
+                      <div className="space-y-2">
+                        {item.viatorTours.map((tour) => (
+                          <a
+                            key={tour.productCode}
+                            href={tour.productUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex gap-3 rounded-xl border border-slate-700 bg-slate-900/60 p-3 hover:border-teal-500/50 hover:bg-slate-900 transition-colors"
+                          >
+                            {tour.imageUrl && (
+                              <img
+                                src={tour.imageUrl}
+                                alt={tour.title}
+                                className="h-16 w-16 shrink-0 rounded-lg object-cover"
+                              />
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-semibold text-slate-100 line-clamp-2">
+                                {tour.title}
+                              </p>
+                              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                                {tour.rating != null && (
+                                  <span>⭐ {tour.rating.toFixed(1)}</span>
+                                )}
+                                {tour.reviewCount != null && (
+                                  <span>({tour.reviewCount} reviews)</span>
+                                )}
+                                {formatDuration(tour.durationMinutes) && (
+                                  <span>· {formatDuration(tour.durationMinutes)}</span>
+                                )}
+                              </div>
+                              {tour.priceFrom != null && tour.currency && (
+                                <p className="mt-1 text-sm font-bold text-teal-400">
+                                  From {formatPrice(tour.priceFrom, tour.currency)}
+                                </p>
+                              )}
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Affiliate Booking Links */}
@@ -119,12 +196,15 @@ export default function ResultsPage() {
                     Find Hotels
                   </a>
                   <a
-                    href={`https://www.viator.com/search/${encodeURIComponent(item.affiliateQuery || item.destination)}`}
+                    href={
+                      item.viatorTours?.[0]?.productUrl ||
+                      `https://www.viator.com/search/${encodeURIComponent(item.affiliateQuery || item.destination)}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg text-center text-sm transition-colors"
                   >
-                    Book Tours
+                    {item.viatorTours?.length ? 'View All Tours' : 'Book Tours'}
                   </a>
                 </div>
               </div>
