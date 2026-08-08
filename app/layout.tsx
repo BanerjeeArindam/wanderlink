@@ -71,15 +71,13 @@ export default function RootLayout({
               Start DNA Quiz ✨
             </Link>
           </div>
-          <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
-          (function () {
-              var script = document.createElement("script");
-              script.async = 1;
-              script.setAttribute("data-cmp-ab","2");
-              script.src = 'https://emrldtp.cc/NTYwMTEw.js?t=560110';
-              document.head.appendChild(script);
-          })();
-        </script> 
+          {/* ✈️ TRAVELPAYOUTS DRIVE SCRIPT */}
+          <Script
+            id="travelpayouts-drive"
+            strategy="afterInteractive"
+            src="https://emrldtp.cc/NTYwMTEw.js?t=560110"
+            data-cmp-ab="2"
+          />
         </header>
 
         {/* 📄 MAIN PAGE CONTENT */}
