@@ -6,17 +6,24 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-// Guest rate limiter: 3 requests per 24 hours (86400 seconds)
+const parseEnvInt = (value: string | undefined, fallback: number) => {
+  const parsed = Number.parseInt(value ?? '', 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
+};
+
+export const guestSearchLimit = parseEnvInt(process.env.FREE_USER_SEARCH_LIMIT ?? process.env.GUEST_SEARCH_LIMIT, 20);
+export const memberSearchLimit = parseEnvInt(process.env.LOGGED_IN_USER_SEARCH_LIMIT ?? process.env.MEMBER_SEARCH_LIMIT, 30);
+export const rateLimitWindowSeconds = parseEnvInt(process.env.RATE_LIMIT_WINDOW_SECONDS, 86400);
+
 export const guestRateLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.fixedWindow(3, '86400 s'),
+  limiter: Ratelimit.fixedWindow(guestSearchLimit, `${rateLimitWindowSeconds} s`),
   prefix: '@upstash/ratelimit/guest',
 });
 
-// Member rate limiter: 10 requests per 24 hours
 export const memberRateLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.fixedWindow(10, '86400 s'),
+  limiter: Ratelimit.fixedWindow(memberSearchLimit, `${rateLimitWindowSeconds} s`),
   prefix: '@upstash/ratelimit/member',
 });
 

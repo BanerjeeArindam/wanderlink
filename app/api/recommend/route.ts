@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
-import { guestRateLimiter, memberRateLimiter } from '@/lib/ratelimit';
+import { guestRateLimiter, memberRateLimiter, guestSearchLimit, memberSearchLimit } from '@/lib/ratelimit';
 
 // Force dynamic serverless execution
 export const dynamic = 'force-dynamic';
@@ -71,8 +71,8 @@ export async function POST(req: Request) {
           error: 'Rate limit reached',
           isGuest: !userId,
           message: !userId
-            ? 'You have reached your 3 free daily searches. Log in for free to unlock 10 daily searches!'
-            : 'You have reached your limit of 10 daily searches. Please try again tomorrow.',
+            ? `You have reached your ${guestSearchLimit} free daily searches. Log in for free to unlock ${memberSearchLimit} daily searches!`
+            : `You have reached your limit of ${memberSearchLimit} daily searches. Please try again tomorrow.`,
         },
         { status: 429 }
       );
