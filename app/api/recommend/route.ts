@@ -198,7 +198,7 @@ export async function POST(req: Request) {
     // 9. Return JSON Payload
     return NextResponse.json({
       success: true,
-      remainingSearches,
+      remainingSearches,    
       isGuest: !userId,
       data: enrichedRecommendations,
     });

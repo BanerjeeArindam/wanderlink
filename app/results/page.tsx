@@ -46,14 +46,17 @@ export default function ResultsPage() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
   useEffect(() => {
-    const savedResults = localStorage.getItem('wanderlink_results');
-    if (savedResults) {
-      try {
-        setDestinations(JSON.parse(savedResults));
-      } catch (e) {
-        console.error('Failed to parse saved results:', e);
-      }
+  const rawData = localStorage.getItem('wanderlink_results');
+  
+  if (rawData && rawData !== 'undefined' && rawData !== 'null') {
+    try {
+      const parsed = JSON.parse(rawData);
+      setDestinations(parsed);
+    } catch (err) {
+      console.error('Corrupted JSON in localStorage:', err);
+      localStorage.removeItem('wanderlink_results'); // Clear bad data
     }
+  }
   }, []);
 
   return (

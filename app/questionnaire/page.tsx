@@ -71,7 +71,7 @@ const handleSubmit = async () => {
 
     const data = await response.json();
 
-    if (data.success) {
+    if (data?.destinations) {
       // Save AI results to localStorage and navigate to results page
       localStorage.setItem('wanderlink_results', JSON.stringify(data.destinations));
       window.location.href = '/results';
