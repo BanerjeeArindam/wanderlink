@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { isComingSoonEnabled } from './lib/coming-soon';
+import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export function middleware(request: NextRequest) {
+const handler = async (_auth: unknown, request: NextRequest) => {
   if (!isComingSoonEnabled()) {
     return NextResponse.next();
   }
@@ -21,8 +22,14 @@ export function middleware(request: NextRequest) {
   }
 
   return NextResponse.next();
-}
+};
+
+export default clerkMiddleware(handler);
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|logo.svg|.*\\..*).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
+    '/__clerk/:path*',
+    '/api/:path*',
+  ],
 };
