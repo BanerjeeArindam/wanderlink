@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import DestinationModal from '@/components/DestinationModal';
 import { useRouter } from 'next/navigation';
 import RegistrationPrompt from '@/components/RegistrationPrompt';

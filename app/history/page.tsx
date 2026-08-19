@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import RegistrationPrompt from '@/components/RegistrationPrompt';
