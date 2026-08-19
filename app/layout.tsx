@@ -2,10 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import ComingSoonOverlay from '@/components/ComingSoonOverlay';
 import { isComingSoonEnabled } from '@/lib/coming-soon';
-import Script from 'next/script';
 import './globals.css'
 import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google';
+import Analytics from '@/components/Analytics';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.wanderlinktravel.com';
+const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-3063787366310725';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,8 +22,52 @@ const geistMono = Geist_Mono({
 
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'WanderLink Travel | AI Travel Intelligence',
-  description: 'Precision destination matching powered by AI and Travel DNA.',
+  description: 'Find destinations matched to your budget, travel style, climate, and interests with WanderLink AI travel recommendations.',
+  keywords: [
+    'AI travel planner',
+    'travel destination recommendations',
+    'personalized travel quiz',
+    'travel DNA',
+    'trip planner',
+    'vacation ideas',
+    'family travel destinations',
+    'travel itinerary generator',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    url: siteUrl,
+    title: 'WanderLink Travel | AI Travel Intelligence',
+    description: 'Discover destinations and trip ideas matched to your unique travel preferences.',
+    siteName: 'WanderLink Travel',
+    images: [{ url: '/fb-cover.png', width: 1200, height: 630, alt: 'WanderLink Travel' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'WanderLink Travel | AI Travel Intelligence',
+    description: 'Discover destinations matched to your Travel DNA.',
+    images: ['/fb-cover.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+  },
   other: {
     'impact-site-verification': '98abc6eb-ac5e-440f-8aa4-11a344cae38e',
   },
@@ -36,6 +83,13 @@ export default function RootLayout({
   if (comingSoon) {
     return (
       <html lang="en" className="scroll-smooth">
+        <head>
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+            crossOrigin="anonymous"
+          />
+        </head>
         <body className="bg-slate-900 text-slate-100 font-sans min-h-screen overflow-hidden selection:bg-teal-500 selection:text-slate-950">
           <div className="pointer-events-none select-none" aria-hidden="true">
             <main>{children}</main>
@@ -48,8 +102,16 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-slate-950">
         <ClerkProvider>
+          <Analytics />
           {/* 🧭 GLOBAL NAVIGATION HEADER */}
           <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-md">
             <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
@@ -73,6 +135,7 @@ export default function RootLayout({
               <div className="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-300">
                 <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
                 <Link href="/questionnaire" className="hover:text-emerald-400 transition-colors">Quiz</Link>
+                <Link href="/trip-cost" className="hover:text-amber-400 transition-colors">Trip Cost</Link>
                 <Link href="/results" className="hover:text-teal-400 transition-colors">Results</Link>
               </div>
 
@@ -84,7 +147,7 @@ export default function RootLayout({
                         Sign In
                       </button>
                     </SignInButton>
-                    <SignUpButton>
+                    <SignUpButton mode="modal">
                       <button className="bg-purple-700 text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
                         Sign Up
                       </button>
@@ -104,13 +167,6 @@ export default function RootLayout({
                 </Link>
               </div>
             </div>
-            {/* ✈️ TRAVELPAYOUTS DRIVE SCRIPT */}
-            <Script
-              id="travelpayouts-drive"
-              strategy="afterInteractive"
-              src="https://emrldtp.cc/NTYwMTEw.js?t=560110"
-              data-cmp-ab="2"
-            />
           </header>
 
           {/* 📄 MAIN PAGE CONTENT */}
@@ -128,6 +184,10 @@ export default function RootLayout({
                 <Link href="/" className="hover:text-white transition-colors">Home</Link>
                 <Link href="/questionnaire" className="hover:text-white transition-colors">Quiz</Link>
                 <Link href="/results" className="hover:text-white transition-colors">Results</Link>
+                <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+                <Link href="/affiliate-disclosure" className="hover:text-white transition-colors">Affiliate Disclosure</Link>
+                <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
               </div>
               <p>© {new Date().getFullYear()} WanderLink Travel. All rights reserved.</p>
             </div>

@@ -11,8 +11,8 @@ const parseEnvInt = (value: string | undefined, fallback: number) => {
   return Number.isNaN(parsed) ? fallback : parsed;
 };
 
-export const guestSearchLimit = parseEnvInt(process.env.FREE_USER_SEARCH_LIMIT ?? process.env.GUEST_SEARCH_LIMIT, 20);
-export const memberSearchLimit = parseEnvInt(process.env.LOGGED_IN_USER_SEARCH_LIMIT ?? process.env.MEMBER_SEARCH_LIMIT, 30);
+export const guestSearchLimit = parseEnvInt(process.env.FREE_USER_SEARCH_LIMIT ?? process.env.GUEST_SEARCH_LIMIT, 3);
+export const memberSearchLimit = parseEnvInt(process.env.LOGGED_IN_USER_SEARCH_LIMIT ?? process.env.MEMBER_SEARCH_LIMIT, 10);
 export const rateLimitWindowSeconds = parseEnvInt(process.env.RATE_LIMIT_WINDOW_SECONDS, 86400);
 
 export const guestRateLimiter = new Ratelimit({
