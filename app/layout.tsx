@@ -91,10 +91,12 @@ export default function RootLayout({
           />
         </head>
         <body className="bg-slate-900 text-slate-100 font-sans min-h-screen overflow-hidden selection:bg-teal-500 selection:text-slate-950">
-          <div className="pointer-events-none select-none" aria-hidden="true">
-            <main>{children}</main>
-          </div>
-          <ComingSoonOverlay />
+          <ClerkProvider>
+            <div className="pointer-events-none select-none" aria-hidden="true">
+              <main>{children}</main>
+            </div>
+            <ComingSoonOverlay />
+          </ClerkProvider>
         </body>
       </html>
     );
