@@ -25,6 +25,8 @@ export default function TripCostPage() {
   const [result, setResult] = useState<TripCostResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailStatus, setEmailStatus] = useState('');
 
   const update = (field: keyof typeof form, value: string | number) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -34,6 +36,7 @@ export default function TripCostPage() {
     event.preventDefault();
     setLoading(true);
     setError('');
+    setEmailStatus('');
     try {
       const response = await fetch('/api/trip-cost', {
         method: 'POST',
@@ -43,6 +46,14 @@ export default function TripCostPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Unable to calculate trip cost.');
       setResult(data.result);
+
+      if (isSignedIn) {
+        fetch('/api/trip-cost/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...form, result: data.result }),
+        }).catch((saveError) => console.warn('Unable to save trip cost history:', saveError));
+      }
     } catch (calculationError) {
       setError(calculationError instanceof Error ? calculationError.message : 'Unable to calculate trip cost.');
     } finally {
@@ -50,14 +61,40 @@ export default function TripCostPage() {
     }
   };
 
+  const handleEmailCost = async () => {
+    if (!result) return;
+    setEmailSending(true);
+    setEmailStatus('');
+    try {
+      const response = await fetch('/api/email-tripcost', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: form.origin, destination: form.destination, attraction: form.attraction, result }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Unable to send email.');
+      setEmailStatus('Cost details emailed successfully.');
+    } catch (emailError) {
+      setEmailStatus(emailError instanceof Error ? emailError.message : 'Unable to send email.');
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
   const accommodationUrl = `/api/stay22?destination=${encodeURIComponent(form.destination)}&adults=${form.adults}&children=${form.children}`;
   const flightUrl = `/api/aviasales?origin=${encodeURIComponent(form.origin)}&destination=${encodeURIComponent(form.destination)}&adults=${form.adults}&children=${form.children}`;
-  const attractionUrl = `https://www.klook.com/en-AU/search/result/?query=${encodeURIComponent(`${form.destination} ${form.attraction}`)}`;
+  const attractionUrl = `/api/klook?query=${encodeURIComponent(`${form.destination} ${form.attraction}`)}`;
+  const primaryCtaUrl = result?.primaryCta.toLowerCase().includes('klook') ? attractionUrl : flightUrl;
 
   return (
     <main className="min-h-screen bg-slate-900 px-6 py-12 text-slate-100">
       <div className="mx-auto max-w-6xl">
-        <Link href="/" className="text-sm font-semibold text-teal-300 hover:text-teal-200">← Back to WanderLink</Link>
+        <div className="flex items-center justify-between gap-3">
+          <Link href="/" className="text-sm font-semibold text-teal-300 hover:text-teal-200">← Back to WanderLink</Link>
+          {isSignedIn && (
+            <Link href="/history" className="text-sm font-semibold text-slate-300 hover:text-white">🕘 View saved estimates</Link>
+          )}
+        </div>
         <div className="mt-12 max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-amber-300">Smart planning tool</p>
           <h1 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-6xl">Smart Trip Cost Calculator</h1>
@@ -96,7 +133,12 @@ export default function TripCostPage() {
                 <div className="rounded-2xl border border-teal-400/30 bg-gradient-to-br from-teal-500/15 to-slate-950/60 p-6">
                   <p className="text-sm font-bold uppercase tracking-widest text-teal-300">Estimated total in AUD</p>
                   <div className="mt-2 flex flex-wrap items-end justify-between gap-4"><div className="text-5xl font-black text-white">A${result.total.toLocaleString()}</div><p className="text-sm text-slate-400">Planning range A${result.lowTotal.toLocaleString()}–A${result.highTotal.toLocaleString()}</p></div>
-                  <div className="mt-6 flex flex-col gap-3 sm:flex-row"><a href={flightUrl} target="_blank" rel="noopener noreferrer" className="flex-1 rounded-xl bg-amber-400 px-4 py-3 text-center font-extrabold text-slate-950 hover:bg-amber-300">{result.primaryCta}</a><a href={accommodationUrl} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-center font-bold text-emerald-200 hover:bg-emerald-400/20">Find accommodation</a></div>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row"><a href={primaryCtaUrl} target="_blank" rel="noopener noreferrer" className="flex-1 rounded-xl bg-amber-400 px-4 py-3 text-center font-extrabold text-slate-950 hover:bg-amber-300">{result.primaryCta}</a><a href={accommodationUrl} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-center font-bold text-emerald-200 hover:bg-emerald-400/20">Find accommodation</a></div>
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <button type="button" onClick={handleEmailCost} disabled={!isSignedIn || emailSending} className="rounded-lg bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:opacity-60">{emailSending ? 'Sending...' : '📧 Email these cost details'}</button>
+                    {!isSignedIn && <span className="text-xs text-slate-400">Sign in to email or save this estimate to your history.</span>}
+                    {emailStatus && <span className="text-xs font-semibold text-teal-300" role="status">{emailStatus}</span>}
+                  </div>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {result.lineItems.map((item) => <div key={item.label} className="rounded-xl border border-slate-800 bg-slate-950/50 p-5"><div className="flex justify-between gap-3"><h3 className="font-bold text-white">{item.label}</h3><span className="font-bold text-teal-300">A${item.amount.toLocaleString()}</span></div><p className="mt-2 text-sm text-slate-400">{item.detail}</p></div>)}

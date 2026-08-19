@@ -78,16 +78,17 @@ export default function SearchHistoryPage() {
               const createdAt = entry.created_at || entry.createdAt || new Date().toISOString();
               const filters = entry.filters || entry.query_params || {};
               const results = entry.results || [];
+              const isTripCost = filters?.type === 'trip_cost';
 
               return (
                 <div key={entry.id} className="rounded-2xl border border-slate-700 bg-slate-800 p-5">
                   <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.2em] text-teal-300">{new Date(createdAt).toLocaleString()}</p>
-                      <h2 className="mt-2 text-xl font-bold text-white">Trip filters</h2>
+                      <h2 className="mt-2 text-xl font-bold text-white">{isTripCost ? 'Trip cost estimate' : 'Trip filters'}</h2>
                     </div>
                     <a
-                      href="/questionnaire"
+                      href={isTripCost ? '/trip-cost' : '/questionnaire'}
                       className="inline-flex items-center rounded-lg bg-teal-600 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-500"
                     >
                       Run again
@@ -110,19 +111,23 @@ export default function SearchHistoryPage() {
                     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                       {(results || []).map((result, idx) => (
                         <div key={`${entry.id}-${idx}`} className="rounded-xl border border-slate-700 bg-slate-900 p-4">
-                          <div className="mb-3 h-28 overflow-hidden rounded-lg">
-                            <img
-                              src={result.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828'}
-                              alt={result.destination}
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
+                          {!isTripCost && (
+                            <div className="mb-3 h-28 overflow-hidden rounded-lg">
+                              <img
+                                src={result.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828'}
+                                alt={result.destination}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                          )}
                           <div className="space-y-2">
                             <div className="flex items-center justify-between gap-2">
                               <h4 className="text-lg font-bold text-teal-400">{result.destination}</h4>
-                              <span className="rounded-full bg-teal-500/10 px-2 py-1 text-[10px] font-semibold text-teal-300">
-                                {result.matchScore}%
-                              </span>
+                              {result.matchScore != null && (
+                                <span className="rounded-full bg-teal-500/10 px-2 py-1 text-[10px] font-semibold text-teal-300">
+                                  {result.matchScore}%
+                                </span>
+                              )}
                             </div>
                             <p className="text-sm text-slate-300 italic">{result.heroTagline}</p>
                             <ul className="space-y-1 text-sm text-slate-300 list-disc list-inside">

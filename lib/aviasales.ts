@@ -65,7 +65,11 @@ function resolveIata(value: string, explicitCode?: string) {
   if (explicitCode?.trim() && /^[A-Za-z]{3}$/.test(explicitCode.trim())) {
     return explicitCode.trim().toUpperCase();
   }
-  return CITY_TO_IATA[value.split(',')[0].trim().toLowerCase()];
+  const trimmedValue = value.trim();
+  if (/^[A-Za-z]{3}$/.test(trimmedValue)) {
+    return trimmedValue.toUpperCase();
+  }
+  return CITY_TO_IATA[trimmedValue.split(',')[0].trim().toLowerCase()];
 }
 
 export function buildAviasalesUrl({

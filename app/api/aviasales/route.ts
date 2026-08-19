@@ -16,11 +16,19 @@ export function GET(request: Request) {
     );
   }
 
-  return NextResponse.redirect(buildAviasalesUrl({
-    origin,
-    destination,
-    destinationCode,
-    adults,
-    children,
-  }));
+  try {
+    return NextResponse.redirect(buildAviasalesUrl({
+      origin,
+      destination,
+      destinationCode,
+      adults,
+      children,
+    }));
+  } catch (error) {
+    console.error('Aviasales link build error:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Unable to build flight search link.' },
+      { status: 400 }
+    );
+  }
 }
